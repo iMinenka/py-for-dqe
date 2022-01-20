@@ -2,23 +2,23 @@
 
 from random import randint
 
-# 1) create list of 100 random numbers from 0 to 1000
+# create list of 100 random numbers from 0 to 1000
 numListRand = []
 for i in range(100):
     num = randint(0, 1000)
     numListRand.append(num)
 
-# 2) sort list from min to max (without using sort())
+# sort list from min to max (without using sort())
+numList = []
+numListRandTemp = numListRand.copy()
 
-# Option_1 with sort()
-# numList.sort(reverse=True)
-
-# Option_2 with sorted()
-# numListRev = sorted(numList, reverse=True)
-
-# Option 3 with index [::-1]
-# numListRev = numList[::-1]
+for i in range(len(numListRandTemp)):
+    minNum = min(numListRandTemp)
+    numList.append(minNum)
+    numListRandTemp.remove(minNum)
 
 # 3) calculate average for even and odd numbers
+# TODO
 # 4) print both average result in console
+# TODO
 
