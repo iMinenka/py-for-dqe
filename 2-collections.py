@@ -13,11 +13,11 @@
 import string
 from random import randint
 
-# list of alphabet letters
+# list of alphabet letters for keys
 ABC = list(string.ascii_lowercase)
 # random size of one dict (limited by alphabet length, duplicates excluded
 dictSize = randint(1, len(ABC) - 1)
-# empty dictionary
+# empty list for lists of tuples (key, value)
 dictsRaw = []
 
 for i in range(randint(2, 10)):  # for every Dict (2 to 10)
@@ -31,22 +31,27 @@ for i in range(randint(2, 10)):  # for every Dict (2 to 10)
         dictRaw.append(pair)  # add tuple to one Dict
         abc.pop(n)  # remove letter from abc to prevent duplicates
 
-dicts = [dict(i) for i in dictsRaw]  # transform List of lists into List of dicts
+dicts = [dict(i) for i in dictsRaw]  # transform List of lists with Tuples into List of dicts
 
-print(dicts)
+# print dictionaries
+print("List of {} dictionaries of size {}:".format(len(dicts), dictSize), dicts, sep="\n")
+for i in dicts:
+    print("Dictionary_{}:".format(dicts.index(i) + 1), i)
 
 # 2) get previously generated list of dicts and create one common dict:
 
 commonDict = dict()  # create empty common dict
 
 for dic in dicts:  # for every dict in list of dicts
-    for k, v in dic.items():  # for key:value pair in a single dict
-        if k in commonDict:  # if key exists in a common dict
-            if commonDict[k] < v:  # and key' values greater than in common dict
-                commonDict.update({k: v})  # update common dict key with greater value
-            else:
-                continue
+    dicIndex = dicts.index(dic) + 1  # number of current dictionary
+    for k, v in dic.items():  # for key:value pair in a current dict
+        existKey = [i for i in commonDict.keys() if i.startswith(k)]  # all keys starting with key
+        if existKey and k in existKey[0]:  # if commonDict not empty and has same letter key
+            if commonDict[existKey[0]] < v:  # if value of existing key less than current key value
+                commonDict.pop(existKey[0])  # remove existing key:value
+                commonDict.update({k + "_" + str(dicIndex): v})  # add new key:value common dict, key with prefix
         else:  # if key does not exist in common dict
             commonDict[k] = v  # add new key:value
+dictionary = dict(sorted(commonDict.items()))  # sort common dictionary
 
-print(commonDict)
+print("Common dictionary:", commonDict, "Sorted common dictionary:", dictionary, sep="\n")
