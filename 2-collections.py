@@ -36,7 +36,7 @@ dicts = [dict(i) for i in dictsRaw]  # transform List of lists with Tuples into 
 # print dictionaries
 print("List of {} dictionaries of size {}:".format(len(dicts), dictSize), dicts, sep="\n")
 for i in dicts:
-    print("Dictionary_{}:".format(dicts.index(i) + 1), i)
+    print("Dictionary_{}:".format(dicts.index(i) + 1), dict(sorted(i.items())))
 
 # 2) get previously generated list of dicts and create one common dict:
 
@@ -46,7 +46,14 @@ for dic in dicts:  # for every dict in list of dicts
     dicIndex = dicts.index(dic) + 1  # number of current dictionary
     for k, v in dic.items():  # for key:value pair in a current dict
         existKey = [i for i in commonDict.keys() if i.startswith(k)]  # all keys starting with key
-        if existKey and k in existKey[0]:  # if commonDict not empty and has same letter key
+        if existKey and k in existKey:  # if commonDict not empty and has same letter key
+            if commonDict[k] >= v:  # if value of existing key less than current key value
+                commonDict.update({k + "_" + str((dicts.index([dic for dic in dicts if k in dic.keys()][0])) + 1): commonDict[k]})  # add new key:value common dict, key with prefix
+                commonDict.pop(k)  # remove existing key:value
+            else: # commonDict[k] < v:  # if value of existing key less than current key value
+                commonDict.update({k + "_" + str(dicIndex): v})  # add new key:value common dict, key with prefix
+                commonDict.pop(k)  # remove existing key:value
+        elif existKey and k in existKey[0]:  # if commonDict not empty and has same letter key
             if commonDict[existKey[0]] < v:  # if value of existing key less than current key value
                 commonDict.pop(existKey[0])  # remove existing key:value
                 commonDict.update({k + "_" + str(dicIndex): v})  # add new key:value common dict, key with prefix
@@ -54,4 +61,5 @@ for dic in dicts:  # for every dict in list of dicts
             commonDict[k] = v  # add new key:value
 dictionary = dict(sorted(commonDict.items()))  # sort common dictionary
 
-print("Common dictionary:", commonDict, "Sorted common dictionary:", dictionary, sep="\n")
+print("Common dictionary:", dictionary, sep="\n")
+
