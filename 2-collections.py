@@ -47,10 +47,10 @@ for dic in dicts:  # for every dict in list of dicts
     for k, v in dic.items():  # for key:value pair in a current dict
         existKey = [i for i in commonDict.keys() if i.startswith(k)]  # all keys starting with key
         if existKey and k in existKey:  # if commonDict not empty and has same letter key
-            if commonDict[k] >= v:  # if value of existing key less than current key value
+            if commonDict[k] >= v:  # if value of existing key greater or equal than current key value
                 commonDict.update({k + "_" + str((dicts.index([dic for dic in dicts if k in dic.keys()][0])) + 1): commonDict[k]})  # add new key:value common dict, key with prefix
                 commonDict.pop(k)  # remove existing key:value
-            else: # commonDict[k] < v:  # if value of existing key less than current key value
+            else:  # if value of existing key less than current key value
                 commonDict.update({k + "_" + str(dicIndex): v})  # add new key:value common dict, key with prefix
                 commonDict.pop(k)  # remove existing key:value
         elif existKey and k in existKey[0]:  # if commonDict not empty and has same letter key
