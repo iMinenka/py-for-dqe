@@ -7,6 +7,8 @@ text = """homEwork:
 
 	last iz TO calculate nuMber OF Whitespace characteRS in this Text. caREFULL, not only Spaces, but ALL whitespaces."""
 
+import re
+
 # Split text by tab and Capitalize after tab
 textByTab = [i.capitalize() for i in text.lower().split("\t")]
 #print("textByTab is", textByTab)
@@ -41,5 +43,5 @@ textResultWithIs = textWithExtra.replace(" iz ", " is ")
 print(textResultWithIs)
 
 # Count of whitespaces in text
-print("I got", sum((textResultWithIs.count(" "), textResultWithIs.count("\n"),
-                    textResultWithIs.count("\t"))))
+spaces = len(re.findall(r"\s", textResultWithIs))
+print("I got", spaces)
