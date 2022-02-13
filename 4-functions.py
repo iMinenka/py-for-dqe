@@ -1,3 +1,7 @@
+from random import randint, sample
+
+# Homework 1 from Lesson 3
+
 example = """homEwork:
 	tHis iz your homeWork, copy these Text to variable. 
 
@@ -62,3 +66,72 @@ def whitespace_counter(text):
 
 
 print("I got", whitespace_counter(textWithExtra))
+
+# Homework 2 from Lesson 2
+"""
+1. create a list of random number of dicts (from 2 to 10)
+- dict's random numbers of keys should be letter,
+- dict's values should be a number (0-100),
+-- example: [{'a': 5, 'b': 7, 'g': 11}, {'a': 3, 'c': 35, 'g': 42}]
+2. get previously generated list of dicts and create one common dict:
+- if dicts have same key, we will take max value, and rename key with dict number with max value
+- if key is only in one dict - take it as is,
+- example: {'a_1': 5, 'b': 7, 'c': 35, 'g_2': 42}
+"""
+
+
+# create a list of letters
+def alphabet_letters():
+    import string
+    return list(string.ascii_lowercase)
+
+
+abc = alphabet_letters()
+
+
+# create a list of dictionaries
+def dic_list_generator(list_size, dic_size):
+    dics = []
+    for i in range(list_size):
+        keys = [k for k in sample(abc, dic_size)]  # random letters
+        values = [v for v in sample(range(100), dic_size)]
+        dic = dict(zip(keys, values))
+        dics.append(dic)
+    return dics
+
+
+dictNumber = randint(2, 10)  # number of dics in list
+dictSize = randint(1, len(abc) - 1)  # dic length
+print(f"Number of dicts: {dictNumber}. Dict size: {dictSize}")
+
+dictionaries = dic_list_generator(dictNumber, dictSize)
+print(dictionaries)
+
+
+# create a common dictionary from a list of dictionaries with highest value of key
+def combine_dictionaries(diclist):
+    commonDict = dict()  # create empty common dict
+    for dic in diclist:  # for every dict in list of dicts
+        dicIndex = diclist.index(dic) + 1  # number of current dictionary
+        for k, v in dic.items():  # for key:value pair in a current dict
+            existKey = [i for i in commonDict.keys() if i.startswith(k)]  # all keys starting with key
+            if existKey and k in existKey:  # if commonDict not empty and has same letter key
+                if commonDict[k] >= v:  # if value of existing key less than current key value
+                    commonDict.update(
+                        {k + "_" + str((diclist.index([dic for dic in diclist if k in dic.keys()][0])) + 1):
+                             commonDict[k]})  # add new key:value common dict, key with prefix
+                    commonDict.pop(k)  # remove existing key:value
+                else:  # commonDict[k] < v:  # if value of existing key less than current key value
+                    commonDict.update({k + "_" + str(dicIndex): v})  # add new key:value common dict, key with prefix
+                    commonDict.pop(k)  # remove existing key:value
+            elif existKey and k in existKey[0]:  # if commonDict not empty and has same letter key
+                if commonDict[existKey[0]] < v:  # if value of existing key less than current key value
+                    commonDict.pop(existKey[0])  # remove existing key:value
+                    commonDict.update({k + "_" + str(dicIndex): v})  # add new key:value common dict, key with prefix
+            else:  # if key does not exist in common dict
+                commonDict[k] = v  # add new key:value
+    return dict(sorted(commonDict.items()))  # sort common dictionary
+
+
+commonDic = combine_dictionaries(dictionaries)
+print(commonDic)
