@@ -12,6 +12,7 @@ example = """homEwork:
 	last iz TO calculate nuMber OF Whitespace characteRS in this Text. caREFULL, not only Spaces, but ALL whitespaces."""
 
 
+# make all text lowercase
 def to_lower(text):
     return text.lower()
 
@@ -19,6 +20,7 @@ def to_lower(text):
 lwr = to_lower(example)
 
 
+# split by tab and capitalize
 def tab_dot_capitalizer(text):
     tabs = text.split("\t")
     capitalized = list()
@@ -32,6 +34,7 @@ def tab_dot_capitalizer(text):
 capitals = tab_dot_capitalizer(lwr)
 
 
+# generate new sentence from last words
 def extra_sentence(text):
     extra = []
     for p in text.split("\t")[1:]:
@@ -42,6 +45,7 @@ def extra_sentence(text):
 newSentence = extra_sentence(capitals)
 
 
+# add extra sentence to the text at specified position
 def add_extra_sentence(text, extra, position=2):
     sentences = text.split(".")
     sentences[position] = sentences[position] + ". " + extra
@@ -52,6 +56,7 @@ def add_extra_sentence(text, extra, position=2):
 textWithExtra = add_extra_sentence(capitals, newSentence)
 
 
+# replace mistake "iz" by "is"
 def iz_replacer(text):
     return text.replace(" iz ", " is ")
 
@@ -60,6 +65,7 @@ replacedIz = iz_replacer(textWithExtra)
 print(replacedIz)
 
 
+# count whitespaces in text
 def whitespace_counter(text):
     import re
     return len(re.findall(r"\s", text))
