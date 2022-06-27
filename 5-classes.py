@@ -71,6 +71,7 @@ class Ads(Post):
             file.write(f"Actual until: {self.expiration}" + ", ")
             file.write(f"{self.day_left()} days left")
 
+
 class Weather(Post):
     def __init__(self, city, day):
         Post.__init__(self)
@@ -85,7 +86,6 @@ class Weather(Post):
     def temperature(self):
         temperature_scale = range(-30, 40)
         return choice(temperature_scale)
-
 
     def publish(self):
         with open("feed.txt", "a") as file:
