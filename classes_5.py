@@ -71,50 +71,55 @@ class Ads(Post):
             file.write(f"Actual until: {self.expiration}" + ", ")
             file.write(f"{self.day_left()} days left")
 
+
 class Weather(Post):
-    def __init__(self, city, day):
+    def __init__(self, place, time):
         Post.__init__(self)
-        self.city = city
-        self.day = day
+        self.place = place
+        self.time = time
         self.title = "Weather Forecast"
 
-    def sky(self):
+    def get_sky_forecast(self):
         forecast = ["clear", "cloudy", "partially cloudy"]
         return choice(forecast)
 
-    def temperature(self):
+    def get_temperature_forecast(self):
         temperature_scale = range(-30, 40)
         return choice(temperature_scale)
-
 
     def publish(self):
         with open("feed.txt", "a") as file:
             file.write(self.post_title(self.title))
-            file.write(f"On {self.day} the sky in {self.city} will be most probably {self.sky()}.")
-            file.write(f"\nThe temperature will be around {self.temperature()} degrees.")
+            file.write(f"On {self.time} the sky in {self.place} will be most probably {self.get_sky_forecast()}.")
+            file.write(f"\nThe temperature will be around {self.get_temperature_forecast()} degrees.")
 
 
-dataType = input("Select 1 - news, 2 - ad, 3 - weather: ")
-if dataType.isalpha() or int(dataType) not in [1, 2, 3]:
-    print(f"Incorrect value {dataType}. Please enter 1, 2 or 3.")
+def main():
+    dataType = input("Select 1 - news, 2 - ad, 3 - weather: ")
+    if dataType.isalpha() or int(dataType) not in [1, 2, 3]:
+        print(f"Incorrect value {dataType}. Please enter 1, 2 or 3.")
 
-if int(dataType) == 1:
-    news = input("Please enter news text: ")
-    city = input("Enter news city: ")
-    n = News(news, city)
-    n.publish()
+    if int(dataType) == 1:
+        news = input("Please enter news text: ")
+        city = input("Enter news city: ")
+        n = News(news, city)
+        n.publish()
 
-elif int(dataType) == 2:
-    ad = input("Please enter ad text: ")
-    expiration = input("Enter ad expiration date yyyy-mm-dd: ")
-    a = Ads(ad, expiration)
-    a.publish()
+    elif int(dataType) == 2:
+        ad = input("Please enter ad text: ")
+        expiration = input("Enter ad expiration date yyyy-mm-dd: ")
+        a = Ads(ad, expiration)
+        a.publish()
 
-elif int(dataType) == 3:
-    city = input("Please enter city: ")
-    day = input("Enter a date (yyyy-mm-dd): ")
-    w = Weather(city, day)
-    w.publish()
+    elif int(dataType) == 3:
+        city = input("Please enter city: ")
+        day = input("Enter a date (yyyy-mm-dd): ")
+        w = Weather(city, day)
+        w.publish()
 
-else:
-    print("Please enter 1 (for news) or 2 (for private ad)")
+    else:
+        print("Please enter 1 (for news) or 2 (for private ad)")
+
+
+if __name__ == '__main__':
+    main()
