@@ -13,7 +13,7 @@ Each new record should be added to the end of file. Commit file in git for revie
 """
 from datetime import datetime, date
 from random import choice
-
+import csv_parsing_7
 
 
 class Post:
@@ -27,8 +27,8 @@ class Post:
             file.write(self.post_type + '\n')
             file.write(self.post_content + '\n')
             if self.post_tail:
-                file.write(self.post_tail + '\n')
-
+                file.write(self.post_tail + '\n\n')
+        csv_parsing_7.main()
 
 class News(Post):
     def __init__(self, text, location):
@@ -41,7 +41,7 @@ class News(Post):
         return pub_date
 
     def combine_tail_news(self):
-        self.post_tail = self.location + ', ' + self.publish_date() + '\n\n'
+        self.post_tail = self.location + ', ' + self.publish_date()
         # self.post_content = self.post_content + self.post_tail
 
 
@@ -59,7 +59,7 @@ class Ads(Post):
         return str(left_days)
 
     def combine_tail_ads(self):
-        self.post_tail = f'Actual until: {self.expiration}, {self.calculate_left_days()} days left' + '\n'
+        self.post_tail = f'Actual until: {self.expiration}, {self.calculate_left_days()} days left'
 
 
 class Weather(Post):
@@ -84,7 +84,7 @@ class Weather(Post):
                             f'\nThe temperature will be around {self.guess_temperature()} degrees.'
 
     def combine_tail_forecast(self):
-        self.post_tail = f'Forecast probability is {choice(range(1, 100))} %\n'
+        self.post_tail = f'Forecast probability is {choice(range(1, 100))} %.'
 
 
 def main():
@@ -115,8 +115,8 @@ def main():
         else:
             print('Please, enter 1 (news), 2 (ad) or 3 (weather).')
 
-    except:
-        print(f'Incorrect value entered - {user_input}.')
+    except Exception as exc:
+        print(f'Error occured: {exc}')
 
 
 if __name__ == '__main__':

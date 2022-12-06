@@ -10,7 +10,7 @@ from string import ascii_lowercase
 
 
 def read_file():
-    with open('feed.txt', r'') as file:
+    with open('feed.txt', 'r') as file:
         file_content = file.read()
     return file_content
 
@@ -25,7 +25,7 @@ def count_words(list_of_words):
     words_to_lower = [word.lower() for word in list_of_words]
     word_count_list = list()
     for word in words_to_lower:
-        word_count = list_of_words.count(word)
+        word_count = words_to_lower.count(word)
         if word not in word_count_list:
             word_count_list.append(word)
             word_count_list.append(word_count)
@@ -53,7 +53,6 @@ def write_words_count_to_csv(words):
         writer = csv.writer(csv_file, delimiter='-', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         for word in words:
             writer.writerow(word)
-    print('Words calculation finished and results have been written to the file.')
 
 
 def write_letters_count_to_csv(letters):
