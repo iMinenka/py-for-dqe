@@ -18,7 +18,6 @@ class ImportFromFile:
         try:
             with open(self.file_path, "r") as file:
                 lines_in_file = file.readlines()
-            print("File found and records have been read.")
             return lines_in_file
         except FileNotFoundError:
             print("File not found.")
@@ -32,7 +31,6 @@ class ImportFromFile:
                 field_normalized = string_object_3.normalize_text(field)
                 normalized_record.append(field_normalized)
             normalized_records_list.append(','.join(normalized_record))
-        print("Records from file are normalized.")
         return normalized_records_list
 
     def process_records_from_file(self, lines):
@@ -41,9 +39,11 @@ class ImportFromFile:
                 parsed_line = line.strip().split(',', 2)
                 if parsed_line[0] == 'News':
                     news_obj = News(parsed_line[2], parsed_line[1])
+                    news_obj.combine_tail_news()
                     news_obj.publish()
                 elif parsed_line[0] == 'Ads':
                     ads_obj = Ads(parsed_line[2], parsed_line[1])
+                    ads_obj.combine_tail_ads()
                     ads_obj.publish()
                 else:
                     print(f"Unknown record type - {line}")
@@ -54,42 +54,44 @@ class ImportFromFile:
 
 
 def main():
-    input_post_type = input("Select 1 - news, 2 - ad, 3 - weather, 4 - import from file: ")
-    if input_post_type.isalpha() or int(input_post_type) not in [1, 2, 3, 4]:
-        print(f"Incorrect value {input_post_type}. Please enter 1, 2, 3 or 4.")
+    user_input = input("Select 1 - news, 2 - ad, 3 - weather, 4 - import from file: ")
+    try:
+        if int(user_input) == 1:
+            news_content = input("Please enter news text: ")
+            news_city = input("Enter news city: ")
+            my_news = News(news_content, news_city)
+            my_news.combine_tail_news()
+            my_news.publish()
 
-    elif int(input_post_type) == 1:
-        input_news_text = input("Please enter news text: ")
-        input_news_city = input("Enter news city: ")
-        create_news_post = News(input_news_text, input_news_city)
-        create_news_post.publish()
+        elif int(user_input) == 2:
+            ad_content = input("Please enter ad text: ")
+            ad_expiration = input("Enter ad expiration date yyyy-mm-dd: ")
+            my_ad = Ads(ad_content, ad_expiration)
+            # print(my_ad.__dict__)
+            my_ad.combine_tail_ads()
+            my_ad.publish()
 
-    elif int(input_post_type) == 2:
-        input_ad_text = input("Please enter ad text: ")
-        input_ad_expiration = input("Enter ad expiration date yyyy-mm-dd: ")
-        create_ads_post = Ads(input_ad_text, input_ad_expiration)
-        create_ads_post.publish()
+        elif int(user_input) == 3:
+            forecast_city = input("Please enter city: ")
+            forecast_day = input("Enter a date (yyyy-mm-dd): ")
+            weather = Weather(forecast_city, forecast_day)
+            weather.combine_forecast()
+            weather.combine_tail_forecast()
+            weather.publish()
 
-    elif int(input_post_type) == 3:
-        input_weather_city = input("Please enter city: ")
-        input_weather_day = input("Enter a date (yyyy-mm-dd): ")
-        create_weather_post = Weather(input_weather_city, input_weather_day)
-        create_weather_post.publish()
-
-    elif int(input_post_type) == 4:
-        input_file_path = input('Please provide file location (default is file "records.txt" in a program folder): ')
-        try:
-            records = ImportFromFile(input_file_path)
-            raw_records_from_file = records.file_reader()
-            # print("raw_records_from_file: ", raw_records_from_file)
-            normalized_records_from_file = records.normalize_records(raw_records_from_file)
-            # print("normalized_records_from_file: ", normalized_records_from_file)
-            records.process_records_from_file(normalized_records_from_file)
-        except:
-            print("Error occured. Terminating..")
-    else:
-        print("Please provide a valid option for a new post.")
-
+        elif int(user_input) == 4:
+            input_file_path = input('Please provide file location (default is "records.txt" in a program folder): ')
+            try:
+                records = ImportFromFile(input_file_path)
+                raw_records_from_file = records.file_reader()
+                normalized_records_from_file = records.normalize_records(raw_records_from_file)
+                records.process_records_from_file(normalized_records_from_file)
+            except:
+                print("Error occured while importing records from file. Terminating..")
+        else:
+            print('Please, enter 1 (news), 2 (ad), 3 (weather) or 4 (import from file).')
+    except Exception as exc:
+        print(f'Error occured: {exc}')
 
 if __name__ == '__main__':
     main()
