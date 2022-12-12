@@ -12,7 +12,7 @@ import string_object_3
 
 class ImportFromFile:
     def __init__(self, file_path):
-        self.file_path = 'records.txt' if file_path is None else "records.txt"
+        self.file_path = file_path if file_path else "records.txt"
 
     def file_reader(self):
         try:

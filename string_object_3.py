@@ -1,4 +1,4 @@
-some_text_1 = """homEwork:
+some_text = """homEwork:
 	tHis iz your homeWork, copy these Text to variable. 
 
 	You NEED TO normalize it fROM letter CASEs point oF View. also, create one MORE senTENCE witH LAST WoRDS of each existING SENtence and add it to the END OF this Paragraph.
@@ -17,7 +17,7 @@ def normalize_text(text):
     text_capitalized_after_dot = "\t".join(text_capitalized_after_tab).split(".")  # join textByTab and split it by dot
     text_capitalized = list()
     for sentence in text_capitalized_after_dot:  # every sentence in text
-        for word in sentence:  # every symbol in sentence
+        for word in sentence.lstrip():  # every symbol in sentence
             if word[0].isalpha():  # symbol is letter
                 capitalized_sentence = sentence.replace(word, word.upper(), 1)  # replace first letter by Capital letter
                 text_capitalized.append(capitalized_sentence)  # insert sentence with Uppercase letter
@@ -62,10 +62,11 @@ def count_whitespaces(text):
 
 
 if __name__ == '__main__':
-    some_text = "asd asd"
     normalized_text = normalize_text(some_text)
     extra_sentence = create_extra_sentence(normalized_text)
     text_with_extra_sentence = add_extra_sentence(extra_sentence, normalized_text)
     iz_corrected_text = replace_iz_by_is(text_with_extra_sentence)
     print(iz_corrected_text)
     print("I got", count_whitespaces(normalized_text))
+
+

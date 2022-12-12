@@ -1,0 +1,14 @@
+{
+  "posts": [
+    {
+      "type": "news",
+      "text": "Breaking News! sensation. brasil lost the match",
+      "city": "krakoW"
+    },
+    {
+      "type": "ADS",
+      "text": "buy and Earn. asda sd a ds. asd  asd.",
+      "expiration": "2022-12-12"
+    }
+  ]
+}
