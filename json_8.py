@@ -99,11 +99,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    # a = ImportFromJson()
-    # json_file_content = a.read_file()
-    # # print(type(json_file_content))
-    # # print(json_file_content['posts'][1])
-    # # a.process_records_from_file(json_file_content)
-    # norm_records = a.normalize_records(json_file_content)
-    # print(norm_records)
-    # a.process_records_from_file(norm_records)
