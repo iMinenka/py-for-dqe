@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<data name="posts">
+  <post type="newS">
+    <type>news</type>
+    <text>Breaking News! sensation. brasil lost the match</text>
+    <city>krakoW</city>
+  </post>
+  <post>
+    <type>ADS</type>
+    <text>buy and Earn. asda sd a ds. asd  asd.</text>
+    <expiration>2022-12-12</expiration>
+  </post>
+</data>
