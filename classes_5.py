@@ -35,6 +35,7 @@ class News(Post):
         self.post_type = 'News'
         Post.__init__(self, self.post_type, text)
         self.location = location
+        self.combine_tail_news()
 
     def publish_date(self):
         pub_date = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -42,7 +43,6 @@ class News(Post):
 
     def combine_tail_news(self):
         self.post_tail = self.location + ', ' + self.publish_date()
-        # self.post_content = self.post_content + self.post_tail
 
 
 
@@ -51,6 +51,7 @@ class Ads(Post):
         self.post_type = "Private Ad"
         Post.__init__(self, self.post_type, text)
         self.expiration = expiration
+        self.combine_tail_ads()
 
     def calculate_left_days(self):
         today = date.today()
@@ -68,6 +69,7 @@ class Weather(Post):
         Post.__init__(self, self.post_type)
         self.city = city
         self.day = day
+        self.combine_forecast()
 
     def guess_sky(self):
         forecast_options = ["clear", "cloudy", "partially cloudy"]
@@ -94,22 +96,18 @@ def main():
             news_content = input("Please enter news text: ")
             news_city = input("Enter news city: ")
             my_news = News(news_content, news_city)
-            my_news.combine_tail_news()
             my_news.publish()
 
         elif int(user_input) == 2:
             ad_content = input("Please enter ad text: ")
             ad_expiration = input("Enter ad expiration date yyyy-mm-dd: ")
             my_ad = Ads(ad_content, ad_expiration)
-            my_ad.combine_tail_ads()
             my_ad.publish()
 
         elif int(user_input) == 3:
             forecast_city = input("Please enter city: ")
             forecast_day = input("Enter a date (yyyy-mm-dd): ")
             weather = Weather(forecast_city, forecast_day)
-            weather.combine_forecast()
-            weather.combine_tail_forecast()
             weather.publish()
 
         else:

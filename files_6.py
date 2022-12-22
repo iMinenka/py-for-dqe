@@ -39,11 +39,9 @@ class ImportFromFile:
                 parsed_line = line.strip().split(',', 2)
                 if parsed_line[0] == 'News':
                     news_obj = News(parsed_line[2], parsed_line[1])
-                    news_obj.combine_tail_news()
                     news_obj.publish()
                 elif parsed_line[0] == 'Ads':
                     ads_obj = Ads(parsed_line[2], parsed_line[1])
-                    ads_obj.combine_tail_ads()
                     ads_obj.publish()
                 else:
                     print(f"Unknown record type - {line}")
@@ -60,23 +58,18 @@ def main():
             news_content = input("Please enter news text: ")
             news_city = input("Enter news city: ")
             my_news = News(news_content, news_city)
-            my_news.combine_tail_news()
             my_news.publish()
 
         elif int(user_input) == 2:
             ad_content = input("Please enter ad text: ")
             ad_expiration = input("Enter ad expiration date yyyy-mm-dd: ")
             my_ad = Ads(ad_content, ad_expiration)
-            # print(my_ad.__dict__)
-            my_ad.combine_tail_ads()
             my_ad.publish()
 
         elif int(user_input) == 3:
             forecast_city = input("Please enter city: ")
             forecast_day = input("Enter a date (yyyy-mm-dd): ")
             weather = Weather(forecast_city, forecast_day)
-            weather.combine_forecast()
-            weather.combine_tail_forecast()
             weather.publish()
 
         elif int(user_input) == 4:

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<data name="posts">
+  <post type="newS">
+    <type>news</type>
+    <text>Breaking News! sensation. brasil lost the match</text>
+    <city>krakoW</city>
+  </post>
+  <post>
+    <type>ADS</type>
+    <text>buy and Earn. buy more and earn more!</text>
+    <expiration>2022-12-12</expiration>
+  </post>
+    <post>
+    <type>weaTHEr</type>
+    <city>paris</city>
+    <day>2022-12-12</day>
+  </post>
+</data>

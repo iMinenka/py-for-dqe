@@ -1,52 +1,56 @@
 """
-Expand previous Homework 5/6/7 with additional class, which allow to provide records by JSON file:
+Home task
+Expand previous Homework 5/6/7/8 with additional class, which allow to provide records by XML file:
 1.Define your input format (one or many records)
 2.Default folder or user provided file path
 3.Remove file if it was successfully processed
 """
-from classes_5 import *
-from files_6 import *
-import os.path
-import string_object_3
-import json
 
-class ImportFromJson:
+import xml.etree.ElementTree as ET
+from json_8 import *
+from string_object_3 import normalize_text
+
+
+class XmlImport:
     def __init__(self, file_path):
-        self.file_path = file_path if file_path else 'records.json'
+        self.file_path = file_path if file_path else 'records.xml'
 
     def read_file(self):
         try:
-            with open(self.file_path, "r") as file:
-                json_content = json.load(file)
-            return json_content
+            tree = ET.parse(self.file_path)
+            root = tree.getroot()
+            return root
         except FileNotFoundError:
             print("File not found.")
 
-    def normalize_records(self, records_dict):
-        for post in records_dict['posts']:
-            for k, v in post.items():
-                post[k] = string_object_3.normalize_text(v)
-        return records_dict
-
-    def process_records_from_file(self, json_posts):
+    def process_xml(self, posts):
         try:
-            for post in json_posts['posts']:
-                if post['type'] == 'News':
-                    news_obj = News(post['text'], post['city'])
+            for post in posts.iter('post'):
+                post_type = post.find('type').text
+                if post_type.lower() == 'news':
+                    news_text = normalize_text(post.find('text').text)
+                    news_city = normalize_text(post.find('city').text)
+                    news_obj = News(news_text, news_city)
                     news_obj.publish()
-                elif post['type'] == 'Ads':
-                    ads_obj = Ads(post['text'], post['expiration'])
+                elif post_type.lower() == 'ads':
+                    ads_text = normalize_text(post.find('text').text)
+                    ads_expiration = post.find('expiration').text
+                    ads_obj = Ads(ads_text, ads_expiration)
                     ads_obj.publish()
+                elif post_type.lower() == 'weather':
+                    weather_city = normalize_text(post.find('city').text)
+                    weather_day = post.find('day').text
+                    weather_obj = Weather(weather_city, weather_day)
+                    weather_obj.publish()
                 else:
-                    print(f"Unknown post type - {post['type']}. Skipping..")
+                    print('Unknown post type.')
             # os.remove(self.file_path)
             print("File records added into 'feed.txt' file.")
         except Exception as exp:
             print('Error to process records from file - ' + str(exp))
 
-
 def main():
-    user_input = input("Select 1 - news, 2 - ad, 3 - weather, 4 - import from file, 5 - import from json: ")
+    user_input = input("Select 1 - news, 2 - ad, 3 - weather, 4 - import file, 5 - import json, 6 - import xml: ")
     try:
         if int(user_input) == 1:
             news_content = input("Please enter news text: ")
@@ -86,8 +90,16 @@ def main():
             except:
                 print("Error occured while importing records from file. Terminating..")
 
+        elif int(user_input) == 6:
+            input_file_path = input('XML file (default is "records.xml"): ')
+            try:
+                xml_object = XmlImport(input_file_path)
+                parsed_xml = xml_object.read_file()
+                xml_object.process_xml(parsed_xml)
+            except:
+                print("Error occured while importing records from file. Terminating..")
         else:
-            print('Please, enter 1 (news), 2 (ad), 3 (weather), 4 (import from file) or 5 (json import.')
+            print('Please, enter 1 (news), 2 (ad), 3 (weather), 4 (import from file), 5 (json import) or 6 (xml import)')
     except Exception as exc:
         print(f'Error occured: {exc}')
 
