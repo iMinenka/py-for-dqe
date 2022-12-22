@@ -33,11 +33,9 @@ class ImportFromJson:
             for post in json_posts['posts']:
                 if post['type'] == 'News':
                     news_obj = News(post['text'], post['city'])
-                    news_obj.combine_tail_news()
                     news_obj.publish()
                 elif post['type'] == 'Ads':
                     ads_obj = Ads(post['text'], post['expiration'])
-                    ads_obj.combine_tail_ads()
                     ads_obj.publish()
                 else:
                     print(f"Unknown post type - {post['type']}. Skipping..")
@@ -54,22 +52,18 @@ def main():
             news_content = input("Please enter news text: ")
             news_city = input("Enter news city: ")
             my_news = News(news_content, news_city)
-            my_news.combine_tail_news()
             my_news.publish()
 
         elif int(user_input) == 2:
             ad_content = input("Please enter ad text: ")
             ad_expiration = input("Enter ad expiration date yyyy-mm-dd: ")
             my_ad = Ads(ad_content, ad_expiration)
-            my_ad.combine_tail_ads()
             my_ad.publish()
 
         elif int(user_input) == 3:
             forecast_city = input("Please enter city: ")
             forecast_day = input("Enter a date (yyyy-mm-dd): ")
             weather = Weather(forecast_city, forecast_day)
-            weather.combine_forecast()
-            weather.combine_tail_forecast()
             weather.publish()
 
         elif int(user_input) == 4:

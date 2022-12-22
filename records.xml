@@ -7,7 +7,12 @@
   </post>
   <post>
     <type>ADS</type>
-    <text>buy and Earn. asda sd a ds. asd  asd.</text>
+    <text>buy and Earn. buy more and earn more!</text>
     <expiration>2022-12-12</expiration>
+  </post>
+    <post>
+    <type>weaTHEr</type>
+    <city>paris</city>
+    <day>2022-12-12</day>
   </post>
 </data>

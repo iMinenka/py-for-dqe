@@ -7,9 +7,6 @@ Expand previous Homework 5/6/7/8 with additional class, which allow to provide r
 """
 
 import xml.etree.ElementTree as ET
-# from classes_5 import *
-# from files_6 import *
-# from csv_parsing_7 import *
 from json_8 import *
 from string_object_3 import normalize_text
 
@@ -34,14 +31,19 @@ class XmlImport:
                     news_text = normalize_text(post.find('text').text)
                     news_city = normalize_text(post.find('city').text)
                     news_obj = News(news_text, news_city)
-                    news_obj.combine_tail_news()
                     news_obj.publish()
                 elif post_type.lower() == 'ads':
                     ads_text = normalize_text(post.find('text').text)
                     ads_expiration = post.find('expiration').text
                     ads_obj = Ads(ads_text, ads_expiration)
-                    ads_obj.combine_tail_ads()
                     ads_obj.publish()
+                elif post_type.lower() == 'weather':
+                    weather_city = normalize_text(post.find('city').text)
+                    weather_day = post.find('day').text
+                    weather_obj = Weather(weather_city, weather_day)
+                    weather_obj.publish()
+                else:
+                    print('Unknown post type.')
             # os.remove(self.file_path)
             print("File records added into 'feed.txt' file.")
         except Exception as exp:
@@ -54,22 +56,18 @@ def main():
             news_content = input("Please enter news text: ")
             news_city = input("Enter news city: ")
             my_news = News(news_content, news_city)
-            my_news.combine_tail_news()
             my_news.publish()
 
         elif int(user_input) == 2:
             ad_content = input("Please enter ad text: ")
             ad_expiration = input("Enter ad expiration date yyyy-mm-dd: ")
             my_ad = Ads(ad_content, ad_expiration)
-            my_ad.combine_tail_ads()
             my_ad.publish()
 
         elif int(user_input) == 3:
             forecast_city = input("Please enter city: ")
             forecast_day = input("Enter a date (yyyy-mm-dd): ")
             weather = Weather(forecast_city, forecast_day)
-            weather.combine_forecast()
-            weather.combine_tail_forecast()
             weather.publish()
 
         elif int(user_input) == 4:
