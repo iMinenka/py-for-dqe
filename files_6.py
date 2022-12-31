@@ -7,7 +7,7 @@ Expand previous Homework 5 with additional class, which allow to provide records
 """
 from classes_5 import *
 import os.path
-import string_object_3
+from string_object_3 import normalize_text
 
 
 class ImportFromFile:
@@ -35,18 +35,24 @@ class ImportFromFile:
 
     def process_records_from_file(self, lines):
         try:
+            parsed_posts = list()
             for line in lines:
-                parsed_line = line.strip().split(',', 2)
-                if parsed_line[0] == 'News':
-                    news_obj = News(parsed_line[2], parsed_line[1])
-                    news_obj.publish()
-                elif parsed_line[0] == 'Ads':
-                    ads_obj = Ads(parsed_line[2], parsed_line[1])
-                    ads_obj.publish()
+                split_line = line.strip().split(',', 2)
+                if split_line[0].lower() == 'news':
+                    news_text = normalize_text(split_line[2])
+                    news_city = normalize_text(split_line[1])
+                    parsed_posts.append(dict(type='news', news_text=news_text, city=news_city))
+                elif split_line[0].lower() == 'ads':
+                    ads_text = normalize_text(split_line[2])
+                    parsed_posts.append(dict(type='ads', ads_text=ads_text, expiration=split_line[1]))
+                elif split_line[0].lower() == 'weather':
+                    weather_city = normalize_text(split_line[2])
+                    parsed_posts.append(dict(type='weather', city=weather_city, day=split_line[1]))
                 else:
-                    print(f"Unknown record type - {line}")
+                    print(f"Unknown post type - {line}")
+            print("File records processed from file.")
             # os.remove(self.file_path)
-            print("File records added into 'feed.txt' file.")
+            return parsed_posts
         except Exception as exp:
             print('Error to process records from file.' + str(exp))
 
@@ -75,16 +81,26 @@ def main():
         elif int(user_input) == 4:
             input_file_path = input('Please provide file location (default is "records.txt" in a program folder): ')
             try:
-                records = ImportFromFile(input_file_path)
-                raw_records_from_file = records.file_reader()
-                normalized_records_from_file = records.normalize_records(raw_records_from_file)
-                records.process_records_from_file(normalized_records_from_file)
+                file_import = ImportFromFile(input_file_path)
+                file_content = file_import.file_reader()
+                parsed_content = file_import.process_records_from_file(file_content)
+                for post in parsed_content:
+                    if post['type'] == 'news':
+                        news = News(post['news_text'], post['city'])
+                        news.publish()
+                    elif post['type'] == 'ads':
+                        ad = Ads(post['ads_text'], post['expiration'])
+                        ad.publish()
+                    elif post['type'] == 'weather':
+                        weather = Weather(post['city'], post['day'])
+                        weather.publish()
             except:
-                print("Error occured while importing records from file. Terminating..")
+                print("Error occurred while importing records from file. Terminating..")
         else:
             print('Please, enter 1 (news), 2 (ad), 3 (weather) or 4 (import from file).')
     except Exception as exc:
-        print(f'Error occured: {exc}')
+        print(f'Error occurred: {exc}')
+
 
 if __name__ == '__main__':
     main()

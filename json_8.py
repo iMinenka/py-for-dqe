@@ -4,11 +4,11 @@ Expand previous Homework 5/6/7 with additional class, which allow to provide rec
 2.Default folder or user provided file path
 3.Remove file if it was successfully processed
 """
-from classes_5 import *
 from files_6 import *
 import os.path
-import string_object_3
+from string_object_3 import normalize_text
 import json
+
 
 class ImportFromJson:
     def __init__(self, file_path):
@@ -22,25 +22,26 @@ class ImportFromJson:
         except FileNotFoundError:
             print("File not found.")
 
-    def normalize_records(self, records_dict):
-        for post in records_dict['posts']:
-            for k, v in post.items():
-                post[k] = string_object_3.normalize_text(v)
-        return records_dict
-
-    def process_records_from_file(self, json_posts):
+    def process_records_from_json(self, json_posts):
         try:
+            processed_records = list()
             for post in json_posts['posts']:
-                if post['type'] == 'News':
-                    news_obj = News(post['text'], post['city'])
-                    news_obj.publish()
-                elif post['type'] == 'Ads':
-                    ads_obj = Ads(post['text'], post['expiration'])
-                    ads_obj.publish()
+                print(post)
+                if post['type'].lower() == 'news':
+                    news_text = normalize_text(post['text'])
+                    news_city = normalize_text(post['city'])
+                    processed_records.append(dict(type='news', news_text=news_text, city=news_city))
+                elif post['type'].lower() == 'ads':
+                    ads_text = normalize_text(post['text'])
+                    processed_records.append(dict(type='ads', ads_text=ads_text, expiration=post['expiration']))
+                elif post['type'].lower() == 'weather':
+                    weather_city = normalize_text(post['city'])
+                    processed_records.append(dict(type='weather', city=weather_city, day=post['day']))
                 else:
                     print(f"Unknown post type - {post['type']}. Skipping..")
-            # os.remove(self.file_path)
             print("File records added into 'feed.txt' file.")
+            return processed_records
+            # os.remove(self.file_path)
         except Exception as exp:
             print('Error to process records from file - ' + str(exp))
 
@@ -67,29 +68,50 @@ def main():
             weather.publish()
 
         elif int(user_input) == 4:
-            input_file_path = input('Import file (default is "records.txt"): ')
+            input_file_path = input('Please provide file location (default is "records.txt" in a program folder): ')
             try:
-                records = ImportFromFile(input_file_path)
-                raw_records_from_file = records.file_reader()
-                normalized_records_from_file = records.normalize_records(raw_records_from_file)
-                records.process_records_from_file(normalized_records_from_file)
+                file_import = ImportFromFile(input_file_path)
+                file_content = file_import.file_reader()
+                parsed_content = file_import.process_records_from_file(file_content)
+                for post in parsed_content:
+                    if post['type'] == 'news':
+                        news = News(post['news_text'], post['city'])
+                        news.publish()
+                    elif post['type'] == 'ads':
+                        ad = Ads(post['ads_text'], post['expiration'])
+                        ad.publish()
+                    elif post['type'] == 'weather':
+                        weather = Weather(post['city'], post['day'])
+                        weather.publish()
             except:
-                print("Error occured while importing records from file. Terminating..")
+                print("Error occurred while importing records from file. Terminating..")
 
         elif int(user_input) == 5:
             input_file_path = input('JSON file (default is "records.json"): ')
             try:
-                records = ImportFromJson(input_file_path)
-                raw_records_from_file = records.read_file()
-                normalized_records_from_file = records.normalize_records(raw_records_from_file)
-                records.process_records_from_file(normalized_records_from_file)
+                json_import = ImportFromJson(input_file_path)
+                json_content = json_import.read_file()
+                parsed_posts = json_import.process_records_from_json(json_content)
+                for post in parsed_posts:
+                    if post['type'] == 'news':
+                        news = News(post['news_text'], post['city'])
+                        news.publish()
+                    elif post['type'] == 'ads':
+                        ad = Ads(post['ads_text'], post['expiration'])
+                        ad.publish()
+                    elif post['type'] == 'weather':
+                        weather = Weather(post['city'], post['day'])
+                        weather.publish()
+                    else:
+                        print(f'Unknown post type - {post["type"]}')
             except:
-                print("Error occured while importing records from file. Terminating..")
+                print("Error occurred while importing records from file. Terminating..")
 
         else:
             print('Please, enter 1 (news), 2 (ad), 3 (weather), 4 (import from file) or 5 (json import.')
     except Exception as exc:
-        print(f'Error occured: {exc}')
+        print(f'Error occurred: {exc}')
+
 
 if __name__ == '__main__':
     main()

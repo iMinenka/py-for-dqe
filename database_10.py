@@ -80,37 +80,71 @@ def main():
             db.insert_into_table('weather', weather.post_content, weather.city, weather.day)
 
         elif int(user_input) == 4:
-            input_file_path = input('Import file (default is "records.txt"): ')
+            input_file_path = input('Please provide file location (default is "records.txt" in a program folder): ')
             try:
-                records = ImportFromFile(input_file_path)
-                raw_records_from_file = records.file_reader()
-                normalized_records_from_file = records.normalize_records(raw_records_from_file)
-                records.process_records_from_file(normalized_records_from_file)
+                file_import = ImportFromFile(input_file_path)
+                file_content = file_import.file_reader()
+                parsed_content = file_import.process_records_from_file(file_content)
+                for post in parsed_content:
+                    if post['type'] == 'news':
+                        news = News(post['news_text'], post['city'])
+                        news.publish()
+                    elif post['type'] == 'ads':
+                        ad = Ads(post['ads_text'], post['expiration'])
+                        ad.publish()
+                    elif post['type'] == 'weather':
+                        weather = Weather(post['city'], post['day'])
+                        weather.publish()
             except:
-                print("Error occured while importing records from file. Terminating..")
+                print("Error occurred while importing records from file. Terminating..")
 
         elif int(user_input) == 5:
             input_file_path = input('JSON file (default is "records.json"): ')
             try:
-                records = ImportFromJson(input_file_path)
-                raw_records_from_file = records.read_file()
-                normalized_records_from_file = records.normalize_records(raw_records_from_file)
-                records.process_records_from_file(normalized_records_from_file)
+                json_import = ImportFromJson(input_file_path)
+                json_content = json_import.read_file()
+                parsed_posts = json_import.process_records_from_json(json_content)
+                for post in parsed_posts:
+                    if post['type'] == 'news':
+                        news = News(post['news_text'], post['city'])
+                        news.publish()
+                    elif post['type'] == 'ads':
+                        ad = Ads(post['ads_text'], post['expiration'])
+                        ad.publish()
+                    elif post['type'] == 'weather':
+                        weather = Weather(post['city'], post['day'])
+                        weather.publish()
+                    else:
+                        print(f'Unknown post type - {post["type"]}')
             except:
-                print("Error occured while importing records from file. Terminating..")
+                print("Error occurred while importing records from file. Terminating..")
 
         elif int(user_input) == 6:
             input_file_path = input('XML file (default is "records.xml"): ')
             try:
                 xml_object = XmlImport(input_file_path)
-                parsed_xml = xml_object.read_file()
-                xml_object.process_xml(parsed_xml)
-            except:
-                print("Error occured while importing records from file. Terminating..")
+                file_content = xml_object.read_file()
+                parsed_posts = xml_object.process_xml(file_content)
+                for post in parsed_posts:
+                    if post['type'] == 'news':
+                        news = News(post['news_text'], post['city'])
+                        news.publish()
+                    elif post['type'] == 'ads':
+                        ad = Ads(post['ads_text'], post['expiration'])
+                        ad.publish()
+                    elif post['type'] == 'weather':
+                        weather = Weather(post['city'], post['day'])
+                        weather.publish()
+                    else:
+                        print(f'Unknown post type - {post["type"]}')
+
+            except Exception:
+                print("Error occurred while importing records from file. Terminating..")
         else:
             print('Please, enter 1 (news), 2 (ad), 3 (weather), 4 (import from file), 5 (json import) or 6 (xml import)')
     except Exception as exc:
-        print(f'Error occured: {exc}')
+        print(f'Error occurred: {exc}')
+
 
 if __name__ == '__main__':
     DB_NAME = 'sqlite.db'
