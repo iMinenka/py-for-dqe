@@ -25,83 +25,89 @@ class XmlImport:
 
     def process_xml(self, posts):
         try:
+            parsed_posts = list()
             for post in posts.iter('post'):
                 post_type = post.find('type').text
                 if post_type.lower() == 'news':
                     news_text = normalize_text(post.find('text').text)
                     news_city = normalize_text(post.find('city').text)
-                    news_obj = News(news_text, news_city)
-                    news_obj.publish()
+                    parsed_posts.append(dict(type='news', news_text=news_text, city=news_city))
                 elif post_type.lower() == 'ads':
                     ads_text = normalize_text(post.find('text').text)
                     ads_expiration = post.find('expiration').text
-                    ads_obj = Ads(ads_text, ads_expiration)
-                    ads_obj.publish()
+                    parsed_posts.append(dict(type='ads', ads_text=ads_text, expiration=ads_expiration))
+
                 elif post_type.lower() == 'weather':
                     weather_city = normalize_text(post.find('city').text)
                     weather_day = post.find('day').text
-                    weather_obj = Weather(weather_city, weather_day)
-                    weather_obj.publish()
+                    parsed_posts.append(dict(type='weather', city=weather_city, day=weather_day))
                 else:
                     print('Unknown post type.')
             # os.remove(self.file_path)
-            print("File records added into 'feed.txt' file.")
+            print(f'Records from "{self.file_path}" have been processed.')
+            return parsed_posts
         except Exception as exp:
             print('Error to process records from file - ' + str(exp))
 
-def main():
-    user_input = input("Select 1 - news, 2 - ad, 3 - weather, 4 - import file, 5 - import json, 6 - import xml: ")
+
+def main(option):
     try:
-        if int(user_input) == 1:
+        if int(option) == 1:
             news_content = input("Please enter news text: ")
             news_city = input("Enter news city: ")
-            my_news = News(news_content, news_city)
-            my_news.publish()
+            news = dict(type='news', news_text=news_content, city=news_city)
+            process_post(news)
 
-        elif int(user_input) == 2:
+        elif int(option) == 2:
             ad_content = input("Please enter ad text: ")
             ad_expiration = input("Enter ad expiration date yyyy-mm-dd: ")
-            my_ad = Ads(ad_content, ad_expiration)
-            my_ad.publish()
+            ad = dict(type='ads', ads_text=ad_content, expiration=ad_expiration)
+            process_post(ad)
 
-        elif int(user_input) == 3:
+        elif int(option) == 3:
             forecast_city = input("Please enter city: ")
             forecast_day = input("Enter a date (yyyy-mm-dd): ")
-            weather = Weather(forecast_city, forecast_day)
-            weather.publish()
+            weather = dict(type='weather', city=forecast_city, day=forecast_day)
+            process_post(weather)
 
-        elif int(user_input) == 4:
-            input_file_path = input('Import file (default is "records.txt"): ')
+        elif int(option) == 4:
+            input_file_path = input('Please provide file location (default is "records.txt"): ')
             try:
-                records = ImportFromFile(input_file_path)
-                raw_records_from_file = records.file_reader()
-                normalized_records_from_file = records.normalize_records(raw_records_from_file)
-                records.process_records_from_file(normalized_records_from_file)
+                file_import = ImportFromFile(input_file_path)
+                file_content = file_import.file_reader()
+                parsed_posts = file_import.process_records_from_file(file_content)
+                for post in parsed_posts:
+                    process_post(post)
             except:
-                print("Error occured while importing records from file. Terminating..")
+                print("Error occurred while importing records from file. Terminating..")
 
-        elif int(user_input) == 5:
+        elif int(option) == 5:
             input_file_path = input('JSON file (default is "records.json"): ')
             try:
-                records = ImportFromJson(input_file_path)
-                raw_records_from_file = records.read_file()
-                normalized_records_from_file = records.normalize_records(raw_records_from_file)
-                records.process_records_from_file(normalized_records_from_file)
+                json_import = ImportFromJson(input_file_path)
+                json_content = json_import.read_file()
+                parsed_posts = json_import.process_records_from_json(json_content)
+                for post in parsed_posts:
+                    process_post(post)
             except:
-                print("Error occured while importing records from file. Terminating..")
+                print("Error occurred while importing records from file. Terminating..")
 
-        elif int(user_input) == 6:
+        elif int(option) == 6:
             input_file_path = input('XML file (default is "records.xml"): ')
             try:
                 xml_object = XmlImport(input_file_path)
-                parsed_xml = xml_object.read_file()
-                xml_object.process_xml(parsed_xml)
-            except:
-                print("Error occured while importing records from file. Terminating..")
+                file_content = xml_object.read_file()
+                parsed_posts = xml_object.process_xml(file_content)
+                for post in parsed_posts:
+                    process_post(post)
+            except Exception:
+                print("Error occurred while importing records from file. Terminating..")
         else:
-            print('Please, enter 1 (news), 2 (ad), 3 (weather), 4 (import from file), 5 (json import) or 6 (xml import)')
+            print(f'Invalid option provided - {user_input}')
     except Exception as exc:
-        print(f'Error occured: {exc}')
+        print(f'Error occurred: {exc}')
+
 
 if __name__ == '__main__':
-    main()
+    user_input = input("Select 1 - news, 2 - ad, 3 - weather, 4 - import file, 5 - import json, 6 - import xml: ")
+    main(user_input)
