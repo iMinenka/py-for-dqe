@@ -26,7 +26,6 @@ class ImportFromJson:
         try:
             processed_records = list()
             for post in json_posts['posts']:
-                print(post)
                 if post['type'].lower() == 'news':
                     news_text = normalize_text(post['text'])
                     news_city = normalize_text(post['city'])
@@ -52,37 +51,29 @@ def main():
         if int(user_input) == 1:
             news_content = input("Please enter news text: ")
             news_city = input("Enter news city: ")
-            my_news = News(news_content, news_city)
-            my_news.publish()
+            news = dict(type='news', news_text=news_content, city=news_city)
+            process_post(news)
 
         elif int(user_input) == 2:
             ad_content = input("Please enter ad text: ")
             ad_expiration = input("Enter ad expiration date yyyy-mm-dd: ")
-            my_ad = Ads(ad_content, ad_expiration)
-            my_ad.publish()
+            ad = dict(type='ads', ads_text=ad_content, expiration=ad_expiration)
+            process_post(ad)
 
         elif int(user_input) == 3:
             forecast_city = input("Please enter city: ")
             forecast_day = input("Enter a date (yyyy-mm-dd): ")
-            weather = Weather(forecast_city, forecast_day)
-            weather.publish()
+            weather = dict(type='weather', city=forecast_city, day=forecast_day)
+            process_post(weather)
 
         elif int(user_input) == 4:
-            input_file_path = input('Please provide file location (default is "records.txt" in a program folder): ')
+            input_file_path = input('Please provide file location (default is "records.txt"): ')
             try:
                 file_import = ImportFromFile(input_file_path)
                 file_content = file_import.file_reader()
-                parsed_content = file_import.process_records_from_file(file_content)
-                for post in parsed_content:
-                    if post['type'] == 'news':
-                        news = News(post['news_text'], post['city'])
-                        news.publish()
-                    elif post['type'] == 'ads':
-                        ad = Ads(post['ads_text'], post['expiration'])
-                        ad.publish()
-                    elif post['type'] == 'weather':
-                        weather = Weather(post['city'], post['day'])
-                        weather.publish()
+                parsed_posts = file_import.process_records_from_file(file_content)
+                for post in parsed_posts:
+                    process_post(post)
             except:
                 print("Error occurred while importing records from file. Terminating..")
 
@@ -93,22 +84,12 @@ def main():
                 json_content = json_import.read_file()
                 parsed_posts = json_import.process_records_from_json(json_content)
                 for post in parsed_posts:
-                    if post['type'] == 'news':
-                        news = News(post['news_text'], post['city'])
-                        news.publish()
-                    elif post['type'] == 'ads':
-                        ad = Ads(post['ads_text'], post['expiration'])
-                        ad.publish()
-                    elif post['type'] == 'weather':
-                        weather = Weather(post['city'], post['day'])
-                        weather.publish()
-                    else:
-                        print(f'Unknown post type - {post["type"]}')
+                    process_post(post)
             except:
                 print("Error occurred while importing records from file. Terminating..")
 
         else:
-            print('Please, enter 1 (news), 2 (ad), 3 (weather), 4 (import from file) or 5 (json import.')
+            print(f'Invalid option provided - {user_input}')
     except Exception as exc:
         print(f'Error occurred: {exc}')
 
